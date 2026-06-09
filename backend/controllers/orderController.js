@@ -9,6 +9,7 @@ exports.createOrder = async (req, res) => {
   const { items, shippingAddress, paymentMethod, shippingMethod, } = req.body;
 
   let userId = req.user.userId;
+  let email = req.user.email;
 
   // Vérification du format des données
   if (!Array.isArray(items) || items.length === 0) {
@@ -47,7 +48,7 @@ exports.createOrder = async (req, res) => {
     // Appel au micro-service de notification
     try {
       await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}`, {
-        to: `${process.env.EMAIL_USER}`,
+        to: email,
         subject: 'Nouvelle Commande Créée',
         text: `Une commande a été créée avec succès pour les produits suivants : \n${orderDetails
           .map((item) => `Produit ID : ${item.productId}, Quantité : ${item.quantity}`)

@@ -29,7 +29,7 @@ Ce document recense les problèmes identifiés dans le projet et des solutions r
 
 ### 6) Ajout
 - Fichier backend/controllers/orderController.js
-- Ajout : J'&i ajouter des variables d'environnement pour les rêquetes de notification ainsi que de mis a jour des stocks
+- Ajout : J'&i ajouter des variables d'environnement pour les rêquetes de notification ainsi que de mis a jour des stocks avec les bonnes options
 
 ## Frontend
 
