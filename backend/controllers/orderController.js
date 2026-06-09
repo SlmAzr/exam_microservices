@@ -45,7 +45,7 @@ exports.createOrder = async (req, res) => {
 
     // Appel au micro-service de notification
     try {
-      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}`, {
+      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}/notify`, {
         to: email,
         subject: 'Nouvelle Commande Créée',
         text: `Une commande a été créée avec succès pour les produits suivants : \n${orderDetails
