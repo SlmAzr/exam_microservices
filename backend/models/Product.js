@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String, required: true },
   stock: { type: Number, required: true },
 }, {
-  timestamps: true, // Ajoute createdAt et updatedAt
+  timestamps: true, 
 });
 
 module.exports = mongoose.model('Product', productSchema);

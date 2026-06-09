@@ -5,6 +5,8 @@ const User = require('../models/User'); // modèle utilisateur
 require('dotenv').config();
 const axios = require('axios');
 const authLog = require('debug')('authRoutes:console')
+const logger = require('../utils/logger');
+
 //const sendEmail = require('../services/emailService');
 
 exports.login = async (req, res) => {
@@ -64,7 +66,7 @@ exports.register = async (req, res) => {
 
     res.status(201).json({ message: 'Utilisateur créé avec succès.' });
   } catch (error) {
-    console.error('Erreur lors de l\'inscription', error);
+    logger.error('Erreur lors de l\'inscription', error);
     res.status(500).json({ message: 'Une erreur est survenue.' });
   }
 };

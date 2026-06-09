@@ -43,8 +43,6 @@ exports.createOrder = async (req, res) => {
     // Sauvegarder la commande dans la base de données
     const savedOrder = await newOrder.save();
 
-    // console.log('Commande sauvegardée :', savedOrder);
-
     // Appel au micro-service de notification
     try {
       await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}`, {
