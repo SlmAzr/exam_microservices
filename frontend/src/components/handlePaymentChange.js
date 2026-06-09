@@ -9,6 +9,10 @@ const PaymentMethodSelection = () => {
   ];
 
   const handlePaymentChange = (event) => {
+    if (event.target.value === '') {
+      alert('Veuillez sélectionner un mode de paiement.');
+      return;
+    }
     dispatch({ type: 'SET_PAYMENT_METHOD', payload: event.target.value });
   };
 
@@ -21,6 +25,7 @@ const PaymentMethodSelection = () => {
       onChange={handlePaymentChange}
       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
       >
+        <option value="">-sélectionner un mode de paiement-</option>
         {paymentOptions.map((option) => (
           <option key={option} value={option}>
             {option}

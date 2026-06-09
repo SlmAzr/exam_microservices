@@ -10,11 +10,15 @@ const Navbar = () => {
   // Simuler l'état d'authentification avec le localStorage
   const isAuthenticated = !!localStorage.getItem('token');
   const username = localStorage.getItem('username'); // Récupère le nom d'utilisateur si connecté
+  const role = localStorage.getItem('role'); // Récupère le rôle de l'utilisateur
 
   const handleLogout = () => {
     // Supprimer les informations d'authentification
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    dispatch({ type: 'CLEAR_CART' });
+    
     navigate('/login');
   };
 
@@ -23,25 +27,34 @@ const Navbar = () => {
       <div className="flex items-center space-x-4">
         <Link to="/" className="text-xl font-bold">Mon Application</Link>
       </div>
-      
+
       <div className="flex items-center space-x-4">
         {/* Afficher le nom de l'utilisateur s'il est connecté */}
         {isAuthenticated && (
-          <span className="font-semibold">
-            Bonjour, {username}
-          </span>
-        )}
-        
-        {/* Lien vers le Panier avec le nombre d'articles */}
-        <Link to="/cart" className="relative">
-          <span>Panier</span>
-          {cart.length > 0 && (
-            <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-2">
-              {cart.length}
+          <div className="flex items-center space-x-4">
+            <span className="font-semibold">
+              Bonjour, {username}
             </span>
-          )}
-        </Link>
-        
+
+            {role === 'admin' && (
+              <Link to="/admin" className="bg-green-500 px-4 py-2 rounded">
+                Admin
+              </Link>
+            )}
+
+            {/* Lien vers le Panier avec le nombre d'articles */}
+            <Link to="/cart" className="relative">
+              <span>Panier</span>
+              {cart.length > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-2">
+                  {cart.length}
+                </span>
+              )}
+            </Link>
+          </div>
+
+        )}
+
         {/* Lien Connexion / Déconnexion */}
         {!isAuthenticated ? (
           <>

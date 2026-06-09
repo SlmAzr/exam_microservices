@@ -1,14 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import ShippingMethodSelection from '../components/ShippingMethodSelection';
 import PaymentMethodSelection from '../components/handlePaymentChange';
 import ShippingAddress from '../components/ShippingAddress';
 
-
 const ShippingPayment = () => {
   const navigate = useNavigate();
-  // Naviguer vers la page de commande
+  const { shippingAddress } = useCart();
+
+  const requiredAddressFields = ['street', 'city', 'postalCode', 'country'];
+  const isAddressComplete = requiredAddressFields.every(
+    (field) => shippingAddress && shippingAddress[field]?.trim() !== ''
+  );
+
   const handleSubmitOrder = () => {
+    if (!isAddressComplete) {
+      alert('Veuillez renseigner votre adresse de livraison complète avant de passer la commande.');
+      return;
+    }
+
     navigate('/order');
   };
 
@@ -26,12 +37,15 @@ const ShippingPayment = () => {
       </div>
       <hr className="my-4" />
       <div>
-      <button
-              onClick={handleSubmitOrder}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Passer une commande
-      </button>
+        <button
+          onClick={handleSubmitOrder}
+          disabled={!isAddressComplete}
+          className={`bg-blue-500 text-white px-4 py-2 rounded ${
+            !isAddressComplete ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          Passer une commande
+        </button>
       </div>
     </div>
   );

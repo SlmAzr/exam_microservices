@@ -71,7 +71,6 @@ const Order = () => {
       dispatch({ type: "CLEAR_CART" });
       alert("Commande confirmée avec succès !");
     } catch (error) {
-      // console.error("Erreur lors de la commande", error);
       alert("Une erreur technique est survenue. Veuillez réessayer.");
     }
   };

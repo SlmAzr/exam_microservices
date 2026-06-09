@@ -3,11 +3,16 @@ import { useCart } from '../context/CartContext';
  const ShippingMethodSelection = () => {
   const { shippingMethod, dispatch } = useCart();
   const shippingOptions = [
+    { value: '', label: '-sélectionner une méthode de livraison-' },
     { value: 'colissimo', label: 'Colissimo' },
     { value: 'chronopost', label: 'Chronopost' },
   ];
 
   const handleShippingChange = (event) => {
+    if (event.target.value === '') {
+      alert('Veuillez sélectionner une méthode de livraison.');
+      return;
+    }
     dispatch({ type: 'SET_SHIPPING_METHOD', payload: event.target.value });
   };
 

@@ -42,7 +42,7 @@ const ShippingAddress = () => {
       <div className="space-y-2">
         <div>
           <label htmlFor="street" className="block text-sm font-medium text-gray-700">
-            Rue
+            Rue <span className="text-red-500">*</span>
           </label>
           <input 
             type="text" 
@@ -50,12 +50,13 @@ const ShippingAddress = () => {
             name="street" 
             value={street} 
             onChange={handleAddressChange} 
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
           />
         </div>
         <div>
           <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-            Ville
+            Ville <span className="text-red-500">*</span>
           </label>
           <input 
             type="text" 
@@ -63,12 +64,13 @@ const ShippingAddress = () => {
             name="city" 
             value={city} 
             onChange={handleAddressChange} 
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
           />
         </div>
         <div>
           <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-            Code Postal
+            Code Postal <span className="text-red-500">*</span>
           </label>
           <input 
             type="text" 
@@ -76,12 +78,13 @@ const ShippingAddress = () => {
             name="postalCode" 
             value={postalCode} 
             onChange={handleAddressChange} 
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
           />
         </div>
         <div>
           <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-            Pays
+            Pays <span className="text-red-500">*</span>
           </label>
           <input 
             type="text" 
@@ -89,6 +92,7 @@ const ShippingAddress = () => {
             name="country" 
             value={country} 
             onChange={handleAddressChange} 
+            required
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
           />
         </div>
