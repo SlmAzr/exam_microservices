@@ -13,8 +13,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // utilisation des variables d'environnement pour l'URL de l'API
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`,
         credentials
       );
       const { token, role, username } = response.data;
