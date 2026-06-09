@@ -1,0 +1,48 @@
+name: CI / Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run backend tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend
+        run: npm test --if-present
+
+  deploy:
+    name: Trigger Render deploys
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Deploy backend
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_BACKEND }}"
+
+      - name: Deploy gateway
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_GATEWAY }}"
+
+      - name: Deploy service 1
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_SERVICE_1 }}"
+
+      - name: Deploy service 2
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_SERVICE_2 }}"

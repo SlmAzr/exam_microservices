@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { cart } = useCart();
+  const { cart, dispatch } = useCart();
 
   // Simuler l'état d'authentification avec le localStorage
   const isAuthenticated = !!localStorage.getItem('token');
