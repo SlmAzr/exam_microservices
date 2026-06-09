@@ -2,8 +2,13 @@
 const Product = require('../models/Product');
 
 exports.getProducts = async (req, res) => {
+  try {
     const products = await Product.find();
     res.json(products);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des produits :", error);
+    res.status(500).json({ message: "Erreur serveur." });
+  }
 };
 
 exports.updateProductStock = async (req, res) => {

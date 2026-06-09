@@ -5,22 +5,10 @@ const orderLog = require('debug')('orderRoutes:console')
 
 
 exports.createOrder = async (req, res) => {
-  //userLog(`user is ${JSON.stringify(req.user)}`)
-  console.log(`user is in createOrder ${JSON.stringify(req.user)}`)
-  //const { items, shippingAddress, paymentMethod } = req.body;
+
   const { items, shippingAddress, paymentMethod, shippingMethod, } = req.body;
-  console.log(`items are ${JSON.stringify(req.body)}`)
-  //const { items } = req.body;
+
   let userId = req.user.userId;
-  // let shippingAddress = {
-  //   "street": "123 Main St",
-  //   "city": "New York",
-  //   "postalCode": "10001",
-  //   "country": "USA"
-  // };
-
-  // let paymentMethod =  "Carte bancaire";
-
 
   // Vérification du format des données
   if (!Array.isArray(items) || items.length === 0) {
@@ -32,7 +20,7 @@ exports.createOrder = async (req, res) => {
   try {
     // Logique pour préparer les détails de la commande
     const orderDetails = items.map(({ productId, quantity, price }) => {
-      console.log(`Produit ID : ${productId}, Quantité : ${quantity}, Price ${price}`);
+      // console.log(`Produit ID : ${productId}, Quantité : ${quantity}, Price ${price}`);
       return { productId, quantity, price };
     });
 
@@ -54,12 +42,12 @@ exports.createOrder = async (req, res) => {
     // Sauvegarder la commande dans la base de données
     const savedOrder = await newOrder.save();
 
-    console.log('Commande sauvegardée :', savedOrder);
+    // console.log('Commande sauvegardée :', savedOrder);
 
     // Appel au micro-service de notification
     try {
-      await axios.post('http://localhost:8000/notify', {
-        to: 'syaob@yahoo.fr',
+      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}`, {
+        to: `${process.env.EMAIL_USER}`,
         subject: 'Nouvelle Commande Créée',
         text: `Une commande a été créée avec succès pour les produits suivants : \n${orderDetails
           .map((item) => `Produit ID : ${item.productId}, Quantité : ${item.quantity}`)
@@ -70,15 +58,15 @@ exports.createOrder = async (req, res) => {
     }
 
     // Appel au micro-service de gestion des stocks
-    // try {
-    //   await Promise.all(
-    //     items.map(({ productId, quantity }) =>
-    //       axios.post('http://localhost:8000/update-stock', { productId, quantity })
-    //     )
-    //   );
-    // } catch (error) {
-    //   console.error('Erreur lors de la mise à jour des stocks', error);
-    // }
+    try {
+      await Promise.all(
+        items.map(({ productId, quantity }) =>
+          axios.post(`${process.env.GATEWAY_URL}/update-stock`, { productId, quantity })
+        )
+      );
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des stocks', error);
+    }
 
     // Réponse de succès
     res.status(201).json({
@@ -114,8 +102,8 @@ exports.createOrder = async (req, res) => {
   
 //     //   // Appel au micro-service de notification
 //       try {
-//         await axios.post('http://localhost:8000/notify', {
-//           to: "syaob@yahoo.fr",
+//         await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}`, {
+//           to: `${process.env.EMAIL_USER}`,
 //           subject: 'Nouvelle Commande Créée',
 //           text: `Une commande a été créée avec succès pour les produits suivants : \n${orderDetails
 //             .map((item) => `Produit ID : ${item.productId}, Quantité : ${item.quantity}`)
@@ -129,7 +117,7 @@ exports.createOrder = async (req, res) => {
 //       try {
 //         await Promise.all(
 //           products.items.map(({ productId, quantity }) =>
-//             axios.post('http://localhost:8000/update-stock', { productId, quantity })
+//             axios.post(`${process.env.GATEWAY_URL}/update-stock`, { productId, quantity })
 //           )
 //         );
 //       } catch (error) {
@@ -148,7 +136,11 @@ exports.createOrder = async (req, res) => {
 //   };
 
 exports.deleteOrder = async(req, res)=>{
-    const { orderId } = req.body;
+    const { orderId } = req.params.userId;
+    //ajout de la méthode de supression de la commande dans la base de données
+    Order.findByIdAndDelete(orderId)
+    .then(() => res.status(200).json({ message: 'Commande supprimée avec succès.' }))
+    .catch((error) => res.status(500).json({ message: 'Erreur lors de la suppression de la commande.', error }));
     console.log(`orderId to delete is ${orderId}`)
 }
 
@@ -160,15 +152,17 @@ exports.getOrders = async(req, res)=>{
 }
 
 exports.validateOrder = async (req, res) => {
-  const { orderId } = req.body;
-  res.status(200).json({message: `Commande ${orderId} validée avec succès.`})
+  const { orderId } = req.params.id;
+  res
+  .status(200).json({message: `Commande ${orderId} validée avec succès.`})
+  .status(500).json({message: `Erreur lors de la validation de la commande.`})
 }
 
 exports.updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
-  console.log(`dump console log order id => ${orderId} status = ${status}`);
+  // console.log(`dump console log order id => ${orderId} status = ${status}`);
   try {
     // Vérification des données
     if (!status) {
