@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { createOrder } from "../services/api";
 
 const Order = () => {
   const navigate = useNavigate();
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState(null);
   //recuperer le context panier
   const { cart, shippingAddress, paymentMethod, shippingMethod, dispatch } =
     useCart(); // Récupérer le contenu du panier à partir du contexte
@@ -49,7 +51,7 @@ const Order = () => {
 
     try {
       // Créer la commande seulement si toutes les vérifications passent
-      const orderDetails = {
+      const orderPayload = {
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
@@ -61,14 +63,19 @@ const Order = () => {
         shippingMethod,
       };
 
-      const response = await createOrder(orderDetails);
+      const response = await createOrder(orderPayload);
 
       if (response.error) {
         alert(`Erreur : ${response.message || "Échec de la commande"}`);
         return;
       }
 
+      setPlacedOrder({
+        ...orderPayload,
+        displayItems: cart,
+      });
       dispatch({ type: "CLEAR_CART" });
+      setOrderPlaced(true);
       alert("Commande confirmée avec succès !");
     } catch (error) {
       alert("Une erreur technique est survenue. Veuillez réessayer.");
@@ -78,7 +85,47 @@ const Order = () => {
   return (
     <div className="p-8">
       <h2 className="text-2xl font-bold mb-4">Synthèse de la commande</h2>
-      {cart.length === 0 ? (
+      {orderPlaced ? (
+        <div className="bg-green-50 border border-green-200 p-6 rounded">
+          <h3 className="text-xl font-semibold mb-4">
+            Merci ! Votre commande a bien été enregistrée.
+          </h3>
+          <p className="mb-4">
+            Voici le récapitulatif de votre commande :
+          </p>
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">Produit(s)</th>
+                <th className="border border-gray-300 p-2">Quantité(s)</th>
+                <th className="border border-gray-300 p-2">Prix Unitaire (€)</th>
+                <th className="border border-gray-300 p-2">Prix Total (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {placedOrder.displayItems.map((item) => (
+                <tr key={item.id}>
+                  <td className="border border-gray-300 p-2">{item.name}</td>
+                  <td className="border border-gray-300 p-2 text-center">{item.quantity}</td>
+                  <td className="border border-gray-300 p-2 text-center">{item.price.toFixed(2)}</td>
+                  <td className="border border-gray-300 p-2 text-center">{(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="text-right font-bold text-lg mt-4">
+            Total : {placedOrder.total.toFixed(2)} €
+          </p>
+          <div className="mt-4">
+            <button
+              onClick={() => navigate('/')}
+              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+            >
+              Continuer vos achats
+            </button>
+          </div>
+        </div>
+      ) : cart.length === 0 ? (
         <p className="text-gray-600">Votre panier est vide.</p>
       ) : (
         <div>

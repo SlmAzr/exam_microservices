@@ -16,6 +16,9 @@ app.use(express.json());
 //app.use('/auth', authProxy);
 app.use('/notify', notifiProxy);
 app.use('/update-stock', stockProxy);
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', service: 'gateway' });
+});
 
 // Lancer le Gateway
 const PORT = process.env.PORT || process.env.GATEWAY_PORT ||8000;

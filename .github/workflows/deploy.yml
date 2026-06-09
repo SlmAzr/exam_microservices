@@ -38,6 +38,9 @@ jobs:
       - name: Deploy backend
         run: curl -X POST "${{ secrets.RENDER_DEPLOY_BACKEND }}"
 
+      - name: Deploy frontend
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_FRONTEND }}"
+
       - name: Deploy gateway
         run: curl -X POST "${{ secrets.RENDER_DEPLOY_GATEWAY }}"
 
